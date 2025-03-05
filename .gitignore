@@ -1,2 +1,15 @@
-mnist_raw_dataset/*
+# Virtual environment directory
+venv
+
+# Python bytecode files
+__pycache__/
+*.pyc
+
+# Log files
+outputs/logs/
+
+# System files
+.DS_Store
+
+data/mnist_raw_dataset/*
 outputs/*

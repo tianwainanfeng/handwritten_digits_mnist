@@ -1,0 +1,12 @@
+# configs/config.yaml
+
+data:
+  raw:
+    train_images: "data/mnist_raw_dataset/train-images.idx3-ubyte"
+    train_labels: "data/mnist_raw_dataset/train-labels.idx1-ubyte"
+    test_images: "data/mnist_raw_dataset/t10k-images.idx3-ubyte"
+    test_labels: "data/mnist_raw_dataset/t10k-labels.idx1-ubyte"
+
+output:
+  images: "outputs/images/"
+  logs: "outputs/logs/"

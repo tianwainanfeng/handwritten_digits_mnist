@@ -9,4 +9,5 @@
     - Testing samples: 10,000 images
 
 
-
+# Run modules from the project root, i.e.,
+`python src/data/read_and_display.py`
