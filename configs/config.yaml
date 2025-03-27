@@ -6,7 +6,31 @@ data:
     train_labels: "data/mnist_raw_dataset/train-labels.idx1-ubyte"
     test_images: "data/mnist_raw_dataset/t10k-images.idx3-ubyte"
     test_labels: "data/mnist_raw_dataset/t10k-labels.idx1-ubyte"
+  processed: "data/mnist_processed/"
 
 output:
   images: "outputs/images/"
   logs: "outputs/logs/"
+  models: "outputs/models/"
+  plots: "outputs/plots/"
+
+random_seed: 42
+
+model:
+  input_size: 784 # 28x28 pixels
+  hidden_units: 128
+  output_size: 10 # 10 classes for digits 0-9
+  dropout: 0.2 # random 20% of neurons will be ignored or inactive for each training iteration to avoid overfitting, heavily relying on any single neuron
+
+training:
+  batch_size: 64
+  epochs: 20
+  learning_rate: 0.001
+  optimizer: "adam"
+  loss_function: "cross_entropy"
+  validation_split: 0.2 # 20% of training data used for validation
+  early_stop: 5 # training stops after 5 epochs if no improvement
+  use_subset: False # Set to True to use only a subset of the data
+  subset_size: 1000 # Number of samples to use for training/testing
+
+device: "cpu" # Options: "cuda" (GPU), "mps" (Mac GPU)

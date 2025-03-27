@@ -1,17 +1,11 @@
 import os
-import struct
 import logging
-import numpy as np
 import matplotlib.pyplot as plt
 from collections import Counter
 from src.config_loader import CONFIG
+from src.data.load_data import get_mnist_data
 
 # ==== Load Configuration ====
-
-TRAIN_IMAGES = CONFIG["data"]["raw"]["train_images"]
-TEST_IMAGES = CONFIG["data"]["raw"]["test_images"]
-TRAIN_LABELS = CONFIG["data"]["raw"]["train_labels"]
-TEST_LABELS = CONFIG["data"]["raw"]["test_labels"]
 
 OUTPUT_PATH_IMAGES = CONFIG["output"]["images"]
 OUTPUT_PATH_LOGS = CONFIG["output"]["logs"]
@@ -37,29 +31,6 @@ def log_and_print(message):
     logging.info(message)
 
 # ==== Function ====
-
-def load_mnist_images(filename):
-    """Loads MNIST images from IDX file format."""
-    with open(filename, 'rb') as f:
-        magic, num_images, rows, cols = struct.unpack(">IIII", f.read(16))
-        assert magic == 2051, "Invalid magic number for MNIST image file!"
-        
-        # Read image data
-        image_data = np.frombuffer(f.read(), dtype=np.uint8)
-        images = image_data.reshape(num_images, rows, cols)
-        
-    return images
-
-def load_mnist_labels(filename):
-    """Loads MNIST labels from IDX file format."""
-    with open(filename, "rb") as f:
-        magic, num_items = struct.unpack(">II", f.read(8))
-        assert magic == 2049, "Invalid magic numbr for MNIST label file!"
-        
-        # Read lablel data
-        labels = np.frombuffer(f.read(), dtype=np.uint8)
-
-    return labels
 
 def display_and_save_images(images, num_images=10, output_prefix="digit_image"):
     """Displays and saves the first few images."""
@@ -95,25 +66,18 @@ def count_labels(labels, dataset_name="Dataset"):
 
 if __name__ == "__main__":
 
-    # Load images
-    log_and_print("\nLoading MNIST Training Images...")
-    train_images = load_mnist_images(TRAIN_IMAGES)
-    log_and_print(f"Total Training Images: {len(train_images)}")
+    # Load MNIST data
+    (train_images, train_labels) = get_mnist_data("train")
+    (test_images, test_labels) = get_mnist_data("test")
 
-    log_and_print("\nLoading MNIST Testing Images...")
-    test_images = load_mnist_images(TEST_IMAGES)
+    # images
+    log_and_print(f"Total Training Images: {len(train_images)}")
     log_and_print(f"Total Testing Images: {len(test_images)}")
 
     log_and_print("\nDisplaying and Saving Sample Images...")
     display_and_save_images(train_images, num_images=10, output_prefix="digit_image")
     
-    # Load labels
-    log_and_print("\nLoading MNIST Training Labels...")
-    train_labels = load_mnist_labels(TRAIN_LABELS)
-
-    log_and_print("\nLoading MNIST Testing Labels...")
-    test_labels = load_mnist_labels(TEST_LABELS)
-    
+    # labels
     count_labels(train_labels, "Training Set")
     count_labels(test_labels, "Test Set")
 
