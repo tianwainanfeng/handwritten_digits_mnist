@@ -28,6 +28,7 @@ logging.basicConfig(
 SEED = CONFIG["random_seed"]
 BATCH_SIZE = CONFIG["training"]["batch_size"]
 DEVICE = CONFIG["device"]
+MODEL_PATH = os.path.join(CONFIG["output"]["models"], "best_model.pth")
 
 # ==== Seed ====
 
@@ -43,16 +44,27 @@ test_images = torch.tensor(test_images, dtype=torch.float32).view(-1, 1, 28, 28)
 test_labels = torch.tensor(test_labels, dtype=torch.long)
 test_loader = DataLoader(TensorDataset(test_images, test_labels), batch_size=BATCH_SIZE, shuffle=False)
 
+num_test_images = len(test_images)
+logging.info(f"Total test images: {num_test_images}")
+print(f"Total test images: {num_test_images}")
+
+# Count occurrences of each digit (0-9)
+digit_counts = torch.bincount(test_labels, minlength=10)
+
+# Print counts for each digit
+for digit, count in enumerate(digit_counts):
+    logging.info(f"\tDigit {digit}: {count} samples")
+    print(f"\tDigit {digit}: {count} samples")
+
 # ==== Load Best Model ====
 
-best_model_path = os.path.join(CONFIG["output"]["models"], "best_model.pth")
 model = SimpleCNN().to(DEVICE)
 
-if os.path.exists(best_model_path):
-    model.load_state_dict(torch.load(best_model_path))
+if os.path.exists(MODEL_PATH):
+    model.load_state_dict(torch.load(MODEL_PATH))
     model.to(DEVICE)  # Ensure model is on the correct device
-    logging.info(f"Loaded best model from {best_model_path}")
-    print(f"Loaded best model from {best_model_path}")
+    logging.info(f"Loaded best model from {MODEL_PATH}")
+    print(f"Loaded best model from {MODEL_PATH}")
 else:
     print("Error: Best model file not found!")
     logging.error("Error: Best model file not found!")
